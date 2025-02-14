@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ProyectoAnt" default="todo" basedir=".">
+
+	<!-- Propiedades -->
+		<property name="src.dir" value="src"/>
+		<property name="bin.dir" value="bin"/>
+		<property name="docs.dir" value="docs"/>
+		<property name="jar.dir" value="dist"/>
+		<property name="jar.name" value="ProyectoAnt.jar"/>
+	 
+	<!-- Carpetas  -->
+		<target name="init">
+			<mkdir dir="${bin.dir}"/>
+			<mkdir dir="${docs.dir}"/>
+			<mkdir dir="${jar.dir}"/>
+		</target>
+		
+	<!-- Limpieza  -->
+		<target name="clean">
+			<delete>
+				<fileset dir="bin" includes="**/*.class"/>
+			</delete>
+			<echo message=" Archivos .class antiguos eliminados. "/>
+		</target>
+	
+    <!-- Compilacion -->
+    <target name="compile" >
+        <javac srcdir="${src.dir}" destdir="${bin.dir}"/>
+    </target>
+
+    <!-- Documentación Javadoc -->
+    <target name="javadoc" depends="compile">
+        <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" author="true" version="true">
+            <doctitle>Documentación de ProyectoAnt</doctitle>
+        </javadoc>
+    </target>
+
+    <!-- Crear un Archivo JAR -->
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.dir}/${jar.name}" basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="main.principal"/>
+            </manifest>
+        </jar>
+    </target>
+	
+	<!-- Mensaje final -->
+	<target name="mensaje-final" depends="jar">
+	    <echo message=" ¡Compilación finalizada con éxito en ANT, Estibalitz! "/>
+	</target>
+
+
+    <!-- Ejecutar Todo -->
+    <target name="todo" depends="init, clean, compile, javadoc, jar, mensaje-final"/>
+</project>
+	
+
