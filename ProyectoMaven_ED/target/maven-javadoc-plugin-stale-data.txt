@@ -1,0 +1,39 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+-encoding
+'windows-1252'
+-protected
+-sourcepath
+'C:/Users/Fernando Zelaya/SISTEM_DISTRIB/ProyectoMaven_ED/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2025. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/Fernando Zelaya/SISTEM_DISTRIB/ProyectoMaven_ED/target/reports/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'ProyectoMaven_ED 1.0-SNAPSHOT API'
+-linkoffline
+'https://docs.oracle.com/javase/8/docs/api' 'C:/Users/Fernando Zelaya/SISTEM_DISTRIB/ProyectoMaven_ED/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'ProyectoMaven_ED 1.0-SNAPSHOT API'
+com.ejemplo
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\src\main\java = 1739613537938
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\allclasses-frame.html = 1739614222367
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\allclasses-noframe.html = 1739614222367
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\constant-values.html = 1739614222354
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\deprecated-list.html = 1739614222367
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\help-doc.html = 1739614222368
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\index-all.html = 1739614222367
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\index.html = 1739614222368
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\overview-tree.html = 1739614222362
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\package-list = 1739614222348
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\script.js = 1739614222369
+C:\Users\Fernando Zelaya\SISTEM_DISTRIB\ProyectoMaven_ED\target\reports\apidocs\stylesheet.css = 1739614222369
