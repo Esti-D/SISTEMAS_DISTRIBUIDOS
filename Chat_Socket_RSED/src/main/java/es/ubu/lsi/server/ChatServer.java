@@ -1,4 +1,6 @@
 package es.ubu.lsi.server;
+import java.rmi.RemoteException;
+
 import es.ubu.lsi.common.*;
 
 /**
@@ -9,18 +11,21 @@ public interface ChatServer {
 	/** 
 	 * metodo que inicia servidor
 	 */
-	public void start();
+	public void startup();
 	
 	/**
 	 * metodo para envio de mensajes
 	 * @param message
 	 */
-	public void difusionMessage(ChatMessage message);
+	public void broadcast(ChatMessage message)throws RemoteException;
 	
 	/**
 	 * metodo que apaga servidor
 	 */
-	public void stop();
+	public void shutdown();
+	
+	
+	public void remove (int id) throws RemoteException;
 	
 	
 	
