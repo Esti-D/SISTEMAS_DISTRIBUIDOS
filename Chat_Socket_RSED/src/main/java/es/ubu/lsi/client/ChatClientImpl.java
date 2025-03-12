@@ -1,15 +1,17 @@
 package es.ubu.lsi.client;
 
+//modifico los import
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 
 import es.ubu.lsi.common.*;
+import es.ubu.lsi.common.ChatMessage.MessageType;
 
 
 public class ChatClientImpl implements ChatClient {
