@@ -26,13 +26,11 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-        
-
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Plugin para compilar con Java 17 -->
+            <!-- 🔹 Plugin para compilar con Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -43,28 +41,95 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin para limpiar y estructurar el proyecto -->
+            <!-- 🔹 Plugin para generar dos JARs (Servidor y Cliente) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>server</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>server</classifier>
+                            <archive>
+                                <manifest>
+                                    <mainClass>es.ubu.lsi.server.ChatServerImpl</mainClass>
+                                </manifest>
+                            </archive>
+                            <finalName>ChatServer</finalName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>client</classifier>
+                            <archive>
+                                <manifest>
+                                    <mainClass>es.ubu.lsi.client.ChatClientImpl</mainClass>
+                                </manifest>
+                            </archive>
+                            <finalName>ChatClient</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 🔹 Plugin para ejecutar las clases `main()` directamente desde Maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>server</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>es.ubu.lsi.server.ChatServerImpl</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>cliente-pio</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>es.ubu.lsi.client.ChatClientImpl</mainClass>
+                            <arguments>
+                                <argument>pio</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>cliente-blas</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>es.ubu.lsi.client.ChatClientImpl</mainClass>
+                            <arguments>
+                                <argument>blas</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 🔹 Plugin para limpiar el proyecto -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.2.0</version>
             </plugin>
-
-            <!-- Plugin para asegurarse de que la estructura del proyecto es reconocida -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>
-
