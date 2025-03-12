@@ -9,7 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import es.ubu.lsi.common.*;
 import es.ubu.lsi.common.ChatMessage.MessageType;
 
