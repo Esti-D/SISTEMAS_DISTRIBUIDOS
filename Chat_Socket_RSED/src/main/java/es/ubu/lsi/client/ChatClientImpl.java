@@ -1,97 +1,132 @@
 package es.ubu.lsi.client;
 
-/*
- * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.nio.charset.StandardCharsets;
 
-import java.io.*;
-import java.net.*;
+import es.ubu.lsi.common.*;
 
-import es.ubu.lsi.common.ChatMessage;
 
-public class ChatClientImpl  implements ChatClient {
-	
-	// Codigo utilizado de los ejemplos de Socket 
-	
-    public static void main(String[] args) throws IOException {
-        
-        if (args.length != 2) {
-            System.err.println(
-                "Usage: java EchoClient <host name> <port number>");
-            System.exit(1);
-        }
+public class ChatClientImpl implements ChatClient {
+    private final String LOGOUT = "logout";
+    private final String HELP = "help";
+    private String server;
+    private String username;
+    private int port;
+    private boolean carryOn = true;
+    private static int id = 0;
+    private static Socket socket = null;
 
-        String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
-
-        try (
-            Socket echoSocket = new Socket(hostName, portNumber);
-            PrintWriter out =
-                new PrintWriter(echoSocket.getOutputStream(), true);
-            BufferedReader in =
-                new BufferedReader(
-                    new InputStreamReader(echoSocket.getInputStream()));
-            BufferedReader stdIn =
-                new BufferedReader(
-                    new InputStreamReader(System.in))
-        ) {
-            String userInput;
-            while ((userInput = stdIn.readLine()) != null) {
-                out.println(userInput);
-                System.out.println("echo: " + in.readLine());
-            }
-        } catch (UnknownHostException e) {
-            System.err.println("Don't know about host " + hostName);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to " +
-                hostName);
-            System.exit(1);
-        } 
+    public ChatClientImpl(String server, int port, String username) {
+        this.server = server;
+        this.port = port;
+        this.username = username;
     }
 
-	@Override
-	public boolean start() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public static void main(String[] args) {
+        String server = "localhost";
+        String username = args.length > 0 ? args[0] : "Usuario";
+        ChatClientImpl cliente = new ChatClientImpl(server, 1500, username);
+        cliente.start();
+    }
 
-	@Override
-	public void sendMessage(ChatMessage msg) {
-		// TODO Auto-generated method stub
-		
-	}
+    public boolean start() {
+        BufferedReader in = null;
+        PrintWriter out = null;
+        int attempts = 3;
 
-	@Override
-	public void disconnect() {
-		// TODO Auto-generated method stub
-		
-	}
+        while (attempts > 0) {
+            try {
+                socket = new Socket(server, port);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                id = Integer.parseInt(in.readLine());
+                out.println(username);
+                System.out.println("[INFO] Conectado al servidor " + server + ":" + port);
+                break;
+            } catch (IOException e) {
+                System.err.println("[ERROR] No se pudo conectar. Reintentando en 2 segundos...");
+                attempts--;
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        if (attempts == 0) {
+            System.err.println("[ERROR] No se pudo conectar al servidor tras múltiples intentos.");
+            return false;
+        }
+
+        Thread listener = new Thread(new ChatClientListener(in));
+        listener.start();
+
+        try {
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+            while (carryOn) {
+                String userInput = stdIn.readLine();
+                if (userInput.equalsIgnoreCase(LOGOUT)) {
+                    sendMessage(new ChatMessage(id, ChatMessage.MessageType.LOGOUT, userInput));
+                    disconnect();
+                } else if (userInput.equalsIgnoreCase(HELP)) {
+                    showHelp();
+                } else {
+                    sendMessage(new ChatMessage(id, ChatMessage.MessageType.TEXT, "[" + username + "] " + userInput));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public void sendMessage(ChatMessage msg) {
+        try {
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println(msg.getMessage());
+        } catch (IOException e) {
+            System.err.println("[ERROR] No se pudo enviar el mensaje.");
+        }
+    }
+
+    public void disconnect() {
+        carryOn = false;
+        System.out.println("[INFO] Desconectado del servidor.");
+    }
+
+    private void showHelp() {
+        System.out.println("\n[Comandos disponibles]");
+        System.out.println(" - logout : Cierra la sesión.");
+        System.out.println(" - help : Muestra esta ayuda.");
+        System.out.println(" - @usuario mensaje : Envía un mensaje privado.");
+        System.out.println("\n");
+    }
+
+    private class ChatClientListener implements Runnable {
+        private BufferedReader in;
+
+        public ChatClientListener(BufferedReader in) {
+            this.in = in;
+        }
+
+        public void run() {
+            try {
+                String message;
+                while ((message = in.readLine()) != null) {
+                    String timestamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
+                    System.out.println("[" + timestamp + "] " + message);
+                }
+            } catch (IOException e) {
+                System.err.println("[ERROR] Se perdió la conexión con el servidor.");
+            }
+            System.out.println("[INFO] Sesión finalizada.");
+        }
+    }
 }
