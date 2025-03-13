@@ -7,10 +7,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
-* Clase ChatServerlmpl
-* 
-* @authors Estíbalitz Diez & Ricardo Sevilla
-* @version 1.0
+* Implementación del servidor de chat.
+ * 
+ * Gestiona las conexiones de los clientes y el envío de mensajes.
+ *  
+ * @authors Estíbalitz Diez & Ricardo Sevilla
+ * @version 1.0
  */
 public class ChatServerImpl implements ChatServer {
     private static final int DEFAULT_PORT = 1500;
@@ -24,6 +26,7 @@ public class ChatServerImpl implements ChatServer {
 
     /**
      * Método principal que inicia el servidor.
+     * @param args Argumentos de la línea de comandos (no utilizados).
      */
     public static void main(String[] args) {
         System.out.println("Servidor en ejecución en el puerto " + DEFAULT_PORT);
@@ -72,6 +75,7 @@ public class ChatServerImpl implements ChatServer {
 
     /**
      * Envía un mensaje a todos los clientes, excepto al remitente y a los bloqueados.
+     * @param msg Mensaje a enviar, encapsulado en un objeto ChatMessage.
      */
     public void broadcast(ChatMessage msg) {
         int senderId = msg.getClientId();
@@ -93,6 +97,7 @@ public class ChatServerImpl implements ChatServer {
 
     /**
      * Elimina un cliente de la lista de clientes conectados.
+     * @param id Identificador del cliente a eliminar.
      */
     public void remove(int id) {
         String username = getUserById(id);
@@ -103,7 +108,9 @@ public class ChatServerImpl implements ChatServer {
     }
 
     /**
-     * Obtiene el nombre de usuario por su ID.
+     * Obtiene el nombre de usuario asociado a un ID de cliente.
+     * @param id Identificador del cliente.
+     * @return Nombre de usuario correspondiente o "Desconocido" si no se encuentra.
      */
     private String getUserById(int id) {
         for (Map.Entry<Integer, ArrayList<Object>> entry : clients.entrySet()) {
@@ -135,7 +142,7 @@ public class ChatServerImpl implements ChatServer {
     }
 
     /**
-     * Clase interna `ServerThreadForClient` que maneja clientes.
+     * Clase interna `ServerThreadForClient` que maneja comunicación con clientes.
      */
     private class ServerThreadForClient extends Thread {
         private Socket socket;
@@ -144,6 +151,12 @@ public class ChatServerImpl implements ChatServer {
         private BufferedReader in;
         private PrintWriter out;
 
+        /**
+         * Constructor de la clase interna para manejar la conexión de un cliente.
+         * @param socket Socket de conexión del cliente.
+         * @param id Identificador único del cliente.
+         * @param username Nombre del usuario.
+         */
         public ServerThreadForClient(Socket socket, int id, String username) {
             this.socket = socket;
             this.id = id;
@@ -155,7 +168,10 @@ public class ChatServerImpl implements ChatServer {
                 System.out.println("Error al crear los flujos de E/S para " + username);
             }
         }
-
+        
+        /**
+         * Método de ejecución del hilo que gestiona la comunicación con el cliente.
+         */
         @Override
         public void run() {
             try {
@@ -206,7 +222,9 @@ public class ChatServerImpl implements ChatServer {
         }
 
         /**
-         * Bloquea a un usuario.
+         * Bloquea a un usuario y lo mueve a la lista de baneados.
+         * @param id ID del cliente que ejecuta la acción.
+         * @param bannedUsername Nombre de usuario a bloquear.
          */
         private void banUser(int id, String bannedUsername) {
             int bannedId = getUserId(bannedUsername);
@@ -217,7 +235,9 @@ public class ChatServerImpl implements ChatServer {
         }
 
         /**
-         * Desbloquea a un usuario.
+         * Desbloquea a un usuario y lo devuelve a la lista de clientes activos.
+         * @param id ID del cliente que ejecuta la acción.
+         * @param unbannedUsername Nombre de usuario a desbloquear.
          */
         private void unbanUser(int id, String unbannedUsername) {
             int unbannedId = getUserId(unbannedUsername);
@@ -229,6 +249,8 @@ public class ChatServerImpl implements ChatServer {
 
         /**
          * Obtiene el ID de un usuario a partir de su nombre.
+         * @param username Nombre del usuario.
+         * @return ID del usuario o -1 si no se encuentra.
          */
         private int getUserId(String username) {
             for (Map.Entry<Integer, ArrayList<Object>> entry : clients.entrySet()) {

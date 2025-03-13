@@ -1,5 +1,5 @@
-
 package es.ubu.lsi.common;
+
 import java.io.Serializable;
 
 /**
@@ -27,10 +27,12 @@ public class ChatMessage implements Serializable {
         this.clientId = id;
         this.type = type;
         this.message = text;
+        System.out.println("[INFO] Cliente " + id + " patrocina el mensaje: " + (text != null ? text : "[Mensaje vacío]"));
     }
 
     /**
      * Obtiene el identificador del cliente que envió el mensaje.
+     * 
      * @return Identificador del cliente.
      */
     public int getClientId() {
@@ -39,6 +41,7 @@ public class ChatMessage implements Serializable {
 
     /**
      * Obtiene el tipo de mensaje.
+     * 
      * @return Tipo de mensaje.
      */
     public MessageType getType() {
@@ -47,6 +50,7 @@ public class ChatMessage implements Serializable {
 
     /**
      * Obtiene el contenido del mensaje (solo si es de tipo TEXT).
+     * 
      * @return Texto del mensaje o null si no es un mensaje de texto.
      */
     public String getMessage() {
@@ -55,6 +59,7 @@ public class ChatMessage implements Serializable {
 
     /**
      * Representación en cadena del mensaje.
+     * 
      * @return Una cadena con la información del mensaje.
      */
     @Override
@@ -71,3 +76,4 @@ public class ChatMessage implements Serializable {
         SHUTDOWN // Mensaje para apagar el servidor (no se usa en esta práctica)
     }
 }
+

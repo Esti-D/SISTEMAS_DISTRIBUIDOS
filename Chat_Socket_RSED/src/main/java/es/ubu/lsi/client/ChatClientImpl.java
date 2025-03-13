@@ -1,20 +1,23 @@
 package es.ubu.lsi.client;
 
-//modifico los import
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import es.ubu.lsi.common.*;
 import es.ubu.lsi.common.ChatMessage.MessageType;
 
-
+/**
+ * Implementación del cliente de chat.
+ * Permite la conexión, envío y recepción de mensajes en el sistema de chat.
+ * 
+ * @author Ricardo Sevilla
+ * @author Estibalitz Diez
+ */
 public class ChatClientImpl implements ChatClient {
     private final String LOGOUT = "logout";
     private final String HELP = "help";
@@ -25,12 +28,24 @@ public class ChatClientImpl implements ChatClient {
     private static int id = 0;
     private static Socket socket = null;
 
+    /**
+     * Constructor del cliente de chat.
+     * 
+     * @param server   Dirección del servidor.
+     * @param port     Puerto de conexión.
+     * @param username Nombre de usuario.
+     */
     public ChatClientImpl(String server, int port, String username) {
         this.server = server;
         this.port = port;
         this.username = username;
     }
 
+    /**
+     * Método principal para iniciar el cliente de chat.
+     * 
+     * @param args Argumentos de la línea de comandos (opcional: nombre de usuario).
+     */
     public static void main(String[] args) {
         String server = "localhost";
         String username = args.length > 0 ? args[0] : "Usuario";
@@ -38,6 +53,11 @@ public class ChatClientImpl implements ChatClient {
         cliente.start();
     }
 
+    /**
+     * Inicia la conexión con el servidor y gestiona la entrada del usuario.
+     * 
+     * @return true si la conexión es exitosa, false en caso contrario.
+     */
     public boolean start() {
         BufferedReader in = null;
         PrintWriter out = null;
@@ -50,7 +70,7 @@ public class ChatClientImpl implements ChatClient {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 id = Integer.parseInt(in.readLine());
                 out.println(username);
-                System.out.println("[INFO] Conectado al servidor " + server + ":" + port);
+                System.out.println("[INFO] " + username + " patrocina el mensaje: Conectado al servidor " + server + ":" + port);
                 break;
             } catch (IOException e) {
                 System.err.println("[ERROR] No se pudo conectar. Reintentando en 2 segundos...");
@@ -90,20 +110,32 @@ public class ChatClientImpl implements ChatClient {
         return true;
     }
 
+    /**
+     * Envía un mensaje al servidor.
+     * 
+     * @param msg Objeto ChatMessage a enviar.
+     */
     public void sendMessage(ChatMessage msg) {
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(msg.getMessage());
+            System.out.println("[INFO] " + username + " patrocina el mensaje: " + msg.getMessage());
         } catch (IOException e) {
             System.err.println("[ERROR] No se pudo enviar el mensaje.");
         }
     }
 
+    /**
+     * Desconecta al cliente del servidor.
+     */
     public void disconnect() {
         carryOn = false;
-        System.out.println("[INFO] Desconectado del servidor.");
+        System.out.println("[INFO] " + username + " patrocina el mensaje: Desconectado del servidor.");
     }
 
+    /**
+     * Muestra los comandos de ayuda disponibles.
+     */
     private void showHelp() {
         System.out.println("\n[Comandos disponibles]");
         System.out.println(" - logout : Cierra la sesión.");
@@ -112,13 +144,24 @@ public class ChatClientImpl implements ChatClient {
         System.out.println("\n");
     }
 
+    /**
+     * Clase interna para escuchar mensajes del servidor en un hilo separado.
+     */
     private class ChatClientListener implements Runnable {
         private BufferedReader in;
 
+        /**
+         * Constructor del listener del cliente.
+         * 
+         * @param in Buffer de entrada para leer mensajes.
+         */
         public ChatClientListener(BufferedReader in) {
             this.in = in;
         }
 
+        /**
+         * Ejecuta el listener para recibir mensajes del servidor.
+         */
         public void run() {
             try {
                 String message;
