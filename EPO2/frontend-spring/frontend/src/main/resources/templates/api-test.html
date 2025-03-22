@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de API</title>
+</head>
+<body>
+<h2>Simular llamada a API externa</h2>
+
+<!-- Mostrar resultado si existe -->
+<div th:if="${resultado}">
+    <h3>Resultado:</h3>
+    <pre th:text="${resultado}"></pre>
+</div>
+
+<!-- Mostrar mensaje de error si existe -->
+<div th:if="${error}" style="color:red;">
+    <h3>Error al invocar la API:</h3>
+    <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/api-test}" method="post">
+    <label for="parametro">Parámetro:</label><br>
+    <input type="text" id="parametro" name="parametro" required><br><br>
+
+    <button type="submit">Llamar a API</button>
+</form>
+</body>
+</html>
