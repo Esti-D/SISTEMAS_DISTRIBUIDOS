@@ -20,4 +20,4 @@ jobs:
           distribution: 'temurin'
 
       - name: Ejecutar UsuarioServiceTest
-        run: mvn -Dtest=UsuarioServiceTest test
+        run: mvn -Dtest=UsuarioServiceTest test --file EPO2/frontend-spring/frontend/pom.xml
