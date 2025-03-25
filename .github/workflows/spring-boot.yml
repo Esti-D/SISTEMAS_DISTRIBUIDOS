@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Construir proyecto con Maven
-        run: mvn -B package --file EPO2/frontend-spring/pom.xml
+        run: mvn -B package --file EPO2/frontend-spring/frontend/pom.xml
 
       - name: Ejecutar tests
         run: mvn test --file EPO2/frontend-spring/frontend/pom.xml
