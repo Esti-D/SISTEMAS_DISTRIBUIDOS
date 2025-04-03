@@ -11,7 +11,3 @@ Desarrollo EPO2:
 * EPO2 - V4 Configuración BBDD MySQL con Docker-compose y WEB
 
 Actualización Fecha: 3-4-2025
-<<<<<<< HEAD
-  
-=======
->>>>>>> 3cabb18 ( actualizacion de descripcion de versiones)
