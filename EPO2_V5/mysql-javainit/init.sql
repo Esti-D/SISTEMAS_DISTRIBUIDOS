@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 INSERT INTO user (username, password) VALUES ('estibalitz', 'UBU1');
-INSERT INTO user (username, password) VALUES ('ricardo', 'UBU2');
+INSERT INTO user (username, password) VALUES ('aroca', 'UBU2');

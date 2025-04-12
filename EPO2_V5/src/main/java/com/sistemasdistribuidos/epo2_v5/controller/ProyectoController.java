@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,4 +30,3 @@ public class ProyectoController {
         return "proyectos"; // <- será tu HTML "proyectos.html"
     }
 }
-

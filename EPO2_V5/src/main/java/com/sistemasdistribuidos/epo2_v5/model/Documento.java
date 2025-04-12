@@ -1,9 +1,21 @@
 package com.sistemasdistribuidos.epo2_v5.model;
 
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "documentos")
 public class Documento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_doc;
+
+    @Column(nullable = false)
     private String nombre_doc;
-    private int id_pro; // faltaba este
+
+    @Column(name = "id_pro", nullable = false)
+    private int id_pro; // solo el ID, sin el objeto Proyecto
 
     // Getters y setters
     public int getId_doc() {
@@ -30,5 +42,6 @@ public class Documento {
         this.id_pro = id_pro;
     }
 }
+
 
 
