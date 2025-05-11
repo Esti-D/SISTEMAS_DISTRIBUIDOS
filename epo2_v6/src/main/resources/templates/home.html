@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Requirements Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+
+<header>
+    <h1>Requirements Management</h1>
+</header>
+
+<div class="main-area">
+    <!-- 📌 Columna izquierda: GameSpace y Chat -->
+    <aside>
+
+        <!-- GameSpace -->
+        <h2 style="color: #3a7ca5; padding: 20px;">GameSpace</h2>
+
+        <form th:action="@{/buscar-pokemon}" method="get" style="padding: 0 20px;">
+            <input type="text" name="nombre" placeholder="Nombre del Pokémon" required>
+            <button type="submit" class="btn">Buscar</button>
+        </form>
+
+        <div class="pokemon-result">
+            <div th:if="${pokemon != null}">
+                <h3 th:text="${pokemon.nombre}">Nombre</h3>
+                <img th:src="${pokemon.imagenUrl}" alt="Imagen del Pokémon">
+                <p>Tipo(s):
+                    <span th:if="${pokemon.tipos != null}"
+                          th:text="${#strings.arrayJoin(pokemon.tipos, ', ')}">Tipos</span>
+                    <span th:unless="${pokemon.tipos != null}">N/D</span>
+                </p>
+            </div>
+            <div th:if="${error != null}">
+                <p style="color: red;" th:text="${error}"></p>
+            </div>
+        </div>
+
+
+        <!-- Chat Box -->
+        <div class="sidebar-bottom" id="chat-container">
+            <div id="chat-header">Chat privado</div>
+            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 10px; max-height: 200px;">
+                <!-- Aquí aparecerán los mensajes -->
+            </div>
+
+            <div id="chat-input">
+                <select id="userSelect">
+                    <option th:each="u : ${usuarios}" th:if="${u.username != usuario.username}"
+                            th:value="${u.username}" th:text="${u.username}"></option>
+                </select>
+                <input type="text" id="messageInput" placeholder="Escribe un mensaje..." />
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 📌 Columna derecha: Menú y contenido -->
+    <main>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/proyectos">Proyectos</a></li>
+                <li><a href="/documentos">Documentos</a></li>
+                <li><a href="/subsistemas">Subsistemas</a></li>
+                <li><a href="/asociaciones">Asociaciones</a></li>
+                <li><a href="/cargadocs">Carga de Documentos</a></li>
+                <li th:if="${usuario != null and usuario.role == 'ADMIN'}">
+                    <a href="/usuarios">Usuarios</a>
+                </li>
+
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-link" style="color: #e6f0ff;">Cerrar sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <section class="main-content">
+            <img src="/images/logofondo4.png" alt="Logo">
+            <h2 style="color: #3a7ca5;">Bienvenido a Requirements Management</h2>
+            <p>Gestiona los proyectos y requisitos de forma eficiente.</p>
+        </section>
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script th:inline="javascript">
+    let stompClient = null;
+    let username = /*[[${usuario.username}]]*/ "anon";
+    console.log("👤 Usuario autenticado en frontend:", username);
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log("🟢 Conectado al servidor WebSocket:", frame.headers['user-name']);
+
+            stompClient.subscribe('/user/queue/messages', function (messageOutput) {
+                console.log("🟢 Mensaje recibido en cliente:", messageOutput.body);
+                showMessage(JSON.parse(messageOutput.body));
+            });
+        });
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const select = document.getElementById('userSelect');
+        const toUser = select.value;
+        const msg = input.value.trim();
+
+        console.log("Intentando enviar mensaje...");
+        console.log("Remitente:", username, "Destinatario:", toUser, "Contenido:", msg);
+
+        if (msg && stompClient && toUser) {
+            stompClient.send("/app/chat", {}, JSON.stringify({
+                from: username,
+                to: toUser,
+                content: msg
+            }));
+            input.value = '';
+            console.log("Mensaje enviado.");
+        } else {
+            console.warn("Mensaje no enviado. Verifica campos.");
+        }
+    }
+
+    function showMessage(message) {
+        console.log("🟢 Mensaje recibido:", message);
+
+        const messagesDiv = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+
+        if (message.from === username) {
+            messageDiv.classList.add('sent');
+        } else {
+            messageDiv.classList.add('received');
+        }
+
+        messageDiv.textContent = message.from + ': ' + message.content;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    connect();
+</script>
+
+</body>
+</html>

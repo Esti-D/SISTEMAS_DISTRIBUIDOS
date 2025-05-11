@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header>
+    <h1>Editar Usuario</h1>
+</header>
+
+<div class="content-boxr">
+    <h2>Modificar Datos</h2>
+    <form th:action="@{/usuarios/actualizar}" th:object="${usuario}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <label>Nombre de usuario:</label>
+        <input type="text" th:field="*{username}" required />
+
+        <label>Contraseña:</label>
+        <input type="password" th:field="*{password}" required />
+
+        <label>Rol:</label>
+        <input type="text" th:field="*{role}" required />
+
+        <button type="submit" class="btn">Actualizar</button>
+    </form>
+    <a href="/usuarios" class="btn btn-secondary"> ← Volver a la lista</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa del Proyecto</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    #map {
+      height: 500px;
+      width: 90%;
+      margin: 20px auto;
+      border: 2px solid #3a7ca5;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Ubicación del Proyecto</h1>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="/home">Home</a></li>
+    <li><a href="/proyectos">Proyectos</a></li>
+    <li><a href="/documentos">Documentos</a></li>
+    <li><a href="/subsistemas">Subsistemas</a></li>
+    <li><a href="/asociaciones">Asociaciones</a></li>
+    <li><a href="/cargadocs">Carga de Documentos</a></li>
+  </ul>
+</nav>
+
+<section class="content-box">
+  <h2 th:text="'Ubicación de: ' + ${ciudad}"></h2>
+  <div id="map"></div>
+  <a href="/proyectos">← Volver</a>
+</section>
+
+
+<script th:inline="javascript">
+  let ciudad = [[${ciudad}]];
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ciudad)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              const lat = data[0].lat;
+              const lon = data[0].lon;
+
+              const map = L.map('map').setView([lat, lon], 13);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+              }).addTo(map);
+              L.marker([lat, lon]).addTo(map)
+                      .bindPopup(`Ubicación de ${ciudad}`)
+                      .openPopup();
+            } else {
+              document.getElementById('map').innerHTML = 'No se encontró la ubicación.';
+            }
+          })
+          .catch(() => {
+            document.getElementById('map').innerHTML = 'Error al cargar el mapa.';
+          });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Proyecto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+</head>
+<body>
+
+<header>
+    <h1>Requirements Management</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/proyectos">Proyectos</a></li>
+        <li><a href="/documentos">Documentos</a></li>
+        <li><a href="/subsistemas">Subsistemas</a></li>
+        <li><a href="/asociaciones">Asociaciones</a></li>
+        <li><a href="/cargadocs">Carga de Documentos</a></li>
+    </ul>
+</nav>
+
+<div class="form-container">
+    <h2>Crear nuevo proyecto</h2>
+    <form th:action="@{/proyectos/save}" th:object="${proyecto}" method="post">
+        <label>Nombre del Proyecto:</label>
+        <input type="text" th:field="*{nombre_pro}" required />
+        <button type="submit" class="btn">Guardar</button>
+    </form>
+    <a class="back-link" href="/proyectos">← Volver</a>
+</div>
+
+</body>
+</html>

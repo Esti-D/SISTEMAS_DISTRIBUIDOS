@@ -1,0 +1,44 @@
+HELP.md
+
+target/
+**/target/
+
+# Build temporales dentro de estructuras de proyectos
+build/
+**/build/
+
+
+# Carpeta del wrapper de Maven, pero mantenemos el jar necesario
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+
+### VS Code ###
+.vscode/
+
+# Archivos de logs o salidas temporales
+*.log
+logs/
+**/logs/
